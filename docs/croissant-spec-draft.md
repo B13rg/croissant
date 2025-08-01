@@ -64,17 +64,24 @@ This is how Croissant helps address RAI:
 
 Croissant is designed to be modular and extensible. One such extension is the Croissant RAI vocabulary, which addresses 7 specific use cases, starting with the data life cycle, data labeling, and participatory scenarios to AI safety and fairness evaluation, traceability, regulatory compliance and inclusion. More details are available in the [Croissant RAI specification](http://mlcommons.org/croissant/RAI/1.0). We welcome additional extensions from the community to meet the needs of specific data modalities (e.g. audio or video) and domains (e.g. geospatial, life sciences, cultural heritage).
 
-## Terminology
+### Terminology
 
-**Dataset**: A collection of data points or items reflecting the results of such activities as measuring, reporting, collecting, analyzing, or observing.
+**Croissant dataset**: A dataset that comes with a description in the Croissant format. The Croissant file contains dataset metadata, dataset file data, record properties / relations, and derived data properties.
 
-**Croissant dataset**: A dataset that comes with a description in the Croissant format. Note that the Croissant description of a dataset does not generally contain the actual data of the dataset (with the exception of small examples or enumerations). The data itself is contained in separate files, referenced by the Croissant dataset description.
+**Dataset**: A collection of data points or items reflecting the results of such activities as measuring, reporting, collecting, analyzing, or observing.  Described by `FileObject` and `FileSet` resources.
 
-**Data record**: A granular part of a dataset, such as an image, text file, or a row in a table.
+**FileObject**: A single file, such as an image, PDF, video, or archive (.zip, .tar.gz).
 
-**Recordset**: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.
+**FileSet**: A set of homogeneous files such as images, videos, text files.
 
-## Format Example
+**RecordSet**: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.
+
+**Field**: A granular part of a `RecordSet`, such as a text file, image/video metadata, or a row in a table.
+
+**DataSource**: Links data resources to `RecordSets`, including extraction method.
+
+
+### Format Example
 
 To understand the various pieces of a Croissant dataset description, let's look at an example, based on the [PASS](https://www.robots.ox.ac.uk/~vgg/data/pass/) dataset.
 
