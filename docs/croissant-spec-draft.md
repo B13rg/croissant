@@ -1932,3 +1932,85 @@ Segmentation mask as an image:
     "transform": "cr:transform"
   }
 ```
+
+## Appendix 2: Mermaid Diagram
+
+```mermaid
+classDiagram
+    Dataset -- "many" FileObject : distribution
+    Dataset -- "many" FileSet : distribution
+    Dataset -- "many" RecordSet : recordSet
+    RecordSet -- "many" Field : field
+    FileObject -- "many" FileSet : containedIn
+    FileSet -- "many" FileObject : containedIn
+
+    Field -- "1" DataSource : source
+
+    DataSource -- "1" FileObject : fileObject
+    DataSource -- "1" FileSet : fileSet
+    DataSource -- "1" RecordSet : recordSet
+
+
+    class Dataset {
+        +@id
+        +name
+        +description
+        +distribution
+        +recordSet
+        +license
+        +creator
+        +datePublished
+        +dct:conformsTo
+    }
+
+    class DataSource {
+        +@id
+        +fileObject  
+        +fileSet
+        +recordSet
+        +extract
+        +transform
+        +format
+    }
+
+    class FileObject {
+        +@id
+        +name
+        +containedIn
+        +contentUrl
+        +contentSize
+        +encodingFormat
+        +sha256
+    }
+
+    class FileSet {
+        +@id
+        +containedIn
+        +includes
+        +excludes
+        +encodingFormat
+    }
+
+    class RecordSet {
+        +@id
+        +name
+        +field
+        +key
+        +data
+        +examples
+        +annotation
+    }
+
+    class Field {
+        +@id
+        +name
+        +dataType
+        +source
+        +isArray
+        +arrayShape
+        +references
+        +subField
+        +parentField
+        +annotation
+    }
+```
