@@ -1908,15 +1908,26 @@ classDiagram
 
 
     class Dataset {
-        +@id
+        +@type
+        +@context
         +name
         +description
-        +distribution
-        +recordSet
-        +license
-        +creator
+        +license [ ]
+        +url
+        +creator [ ]
         +datePublished
+        +keywords [ ]
+        +publisher [ ]
+        +version
+        +dateCreated
+        +dateModified
+        +sameAs [ ]
+        +sdLicense[ ]
+        +inLanguage [ ]
+        +distribution [ ]
         +dct:conformsTo
+        +isLiveDataset
+        +citeAs
     }
 
     class DataSource {
@@ -1925,48 +1936,56 @@ classDiagram
         +fileSet
         +recordSet
         +extract
-        +transform
+        +transform [ ]
         +format
     }
 
     class FileObject {
         +@id
-        +name
-        +containedIn
-        +contentUrl
-        +contentSize
-        +encodingFormat
-        +sha256
+        +sc:name
+        +sc:contentUrl
+        +sc:contentSize
+        +sc:encodingFormat [ ]
+        +sc:sameAs [ ]
+        +sc:sha256
+        +containedIn [ ]
     }
 
     class FileSet {
         +@id
-        +containedIn
-        +includes
-        +excludes
-        +encodingFormat
+        +containedIn [ ]
+        +includes [ ]
+        +excludes [ ]
+        +sc:encodingFormat [ ]
     }
 
     class RecordSet {
         +@id
         +name
-        +field
-        +key
-        +data
-        +examples
-        +annotation
+        +field [ ]
+        +key [ ]
+        +data [ ]
+        +examples [ ]
+        +annotation [ ]
     }
 
     class Field {
         +@id
         +name
-        +dataType
         +source
+        +dataType [ ]
         +isArray
         +arrayShape
-        +references
-        +subField
-        +parentField
-        +annotation
+        +references [ ]
+        +subField [ ]
+        +parentField [ ]
+        +annotation [ ]
+    }
+
+    class Extract {
+        +@id
+        +fileProperty
+        +column
+        +jsonPath
     }
 ```
