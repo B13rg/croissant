@@ -114,11 +114,11 @@ Croissant is designed to be modular and extensible. One such extension is the Cr
 
 **FileSet**: A set of homogeneous data resource files, such as images, videos, text files.
 
-**RecordSet**: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.
+**RecordSet**: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.  Describes the data contained in a Dataset.
 
-**Field**: A granular part of a `RecordSet`, such as a text file, image/video metadata, or a row in a table.
+**Field**: A granular part of a `RecordSet`, such as a text file, image/video metadata, or a column in a table.
 
-**DataSource**: Links data resources to `RecordSets`, including extraction method.
+**DataSource**: Links data resources to `RecordSets`, and captures extraction and  transformation methods.
 
 
 ### Format Example
