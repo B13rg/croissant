@@ -475,7 +475,7 @@ These [schema.org](http://schema.org) properties are recommended for every Crois
       <a href="http://schema.org/Text">Text</a>
     </td>
     <td>ONE</td>
-    <td>The version of the dataset following the requirements below.</td>
+    <td>The recommended versioning scheme to use for datasets is`MAJOR.MINOR.PATCH`, following [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)</td>
   </tr>
   <tr>
     <td><a href="http://schema.org/dateCreated">dateCreated</a></td>
