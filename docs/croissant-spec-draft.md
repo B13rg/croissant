@@ -45,9 +45,9 @@ The Croissant metadata format simplifies how data is used by ML models. It provi
     - [ID and Reference Mechanism](#id-and-reference-mechanism)
     - [Croissant in Web Pages](#croissant-in-web-pages)
   - [Dataset-level Information](#dataset-level-information)
-    - [schema.org/Dataset](#schemaorgdataset)
-    - [Modified and Added Properties](#modified-and-added-properties)
+    - [Croissant Dataset](#croissant-dataset)
     - [Dataset Versioning/Checkpoints](#dataset-versioningcheckpoints)
+    - [Live Datasets](#live-datasets)
   - [Resources](#resources)
     - [FileObject](#fileobject)
     - [FileSet](#fileset)
@@ -354,15 +354,13 @@ In the rest of this document, we only describe the actual JSON-LD of Croissant m
 
 ## Dataset-level Information
 
-### schema.org/Dataset
-
 Croissant builds on the [schema.org/Dataset](http://schema.org/Dataset) vocabulary, which is widely adopted by datasets on the web. An introduction to describing datasets with this vocabulary can be found [here](https://developers.google.com/search/docs/appearance/structured-data/dataset).
 
 [Schema.org](http://Schema.org) properties are known to be very flexible in terms of the types of values they accept. We list below the main properties of the vocabulary and their expected type.To facilitate more consistent use of these properties we provide additional constraints on their usage in the context of Croissant datasets. We also specify cardinalities to clarify if a property can take one or many values.
 
 We organize [schema.org](http://schema.org) properties in three categories: Required, recommended and other properties. The properties starting with the symbol `@` are defined in JSON-LD, which is our RDF syntax of choice for Croissant.
 
-#### Required
+### Croissant Dataset
 
 The following list of properties from [schema.org](http://schema.org) must be specified for every Croissant dataset.
 
@@ -552,13 +550,13 @@ Each one of the `FileObject`s in a Croissant file may provide a checksum using t
 
 In versioned datasets, it is strongly recommended to record such checksums for all used `FileObject`s, as it allows for robustly checking whether the downloaded files correspond to the ones which are declared in the Croissant definition.
 
-#### Live Datasets
+### Live Datasets
 
 Live datasets constitute a special form of datasets. The term refers to non-static datasets, whose underlying data evolves continuously (for example, a new snapshot of data is released regularly). However, apart from the underlying change of the data, the logic behind the example generation (e.g. the way the data is extracted, the transformations it undergoes, the main attributes that are collected etc.) is usually stable over time.
 
 For live datasets, the Croissant boolean property `isLiveDataset` should be set to True. Moreover, Croissant recommends not to specify checksum on files which are expected to be updated in the future. For example, if a dataset contains one file per calendar day, days that have already occurred in the past are not expected to change and should provide a checksum. However, if the data for the current day is being refreshed hourly, the Croissant file should not have a checksum until the file is no longer expected to be updated. Failing to update the checksum for an updated file may result in the implementation throwing a checksum error. For live datasets, applications are expected to be aware that the dataset is live and subject to changes going forward. For example, to maintain reproducibility, an application should filter data by dates if new data is added over time. Croissant recommends only updating the `version` property if the dataset structure changes or a backwards-incompatible change is made. For example, if files are updated to reflect more recent data with no other semantic changes, the dataset `version` should not be updated. However, if an update is a major semantic change for users, updating the version property may be appropriate.
 
-##### Example 1: Daily refreshes
+#### Example 1: Daily refreshes
 
 A financial dataset corresponding to stock prices is now being used for machine learning. To make analysis more modular, the dataset has been historicallyorganized by year. The dataset was initiated in 2000 and has been constantly updated till today. Each year has a CSV file of the format "stock_data\_&lt;YEAR>.csv", where &lt;YEAR> is the year of the data. The data for the most recent year is updated daily to account for new data. This directory of these files looks something like this:
 
@@ -574,7 +572,7 @@ stock_data_2023.csv
 
 Because the dataset is updated continuously, the dataset should set the isLiveDataset to`true`. Assuming the year is 2023, it is safe to add a checksum for files corresponding to years 2000 to 2022 (inclusive). However, Croissant does not recommend setting the checksum for 2023 until the year is 2024 to avoid mismatches between a prior checksum and the current file. Finally, all files corresponding to prior years should trigger a version update if they are changed (e.g., to reflect a bug fix), since the semantics of the dataset have changed (i.e., history was "rewritten"). However, the current year is understood to be incomplete, so appending new data to the data in the current year should not trigger a version update.
 
-##### Example 2: Daily snapshots
+#### Example 2: Daily snapshots
 
 The same data from Example 1 is exported at a finer granularity to match the daily refresh of the dataset. Accordingly, the data is "snapshotted" into files of the form "stock_data\_&lt;MONTH>\_&lt;DAY>\_&lt;YEAR>.csv" to reflect the month, day, and year of the data in the file. Each file is only written once—when all data from that date is finalized at the end of day.
 
