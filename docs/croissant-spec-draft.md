@@ -373,6 +373,7 @@ The following list of properties from [schema.org](http://schema.org) must be sp
     <th>Cardinality</th>
     <th>Comments</th>
   </thead>
+  <tr><td><b>Required</b></td></tr>
   <tr>
     <td>@context</td>
     <td><a href="http://schema.org/URL">URL</a></td>
@@ -436,19 +437,7 @@ The following list of properties from [schema.org](http://schema.org) must be sp
     <td>ONE</td>
     <td>The date the dataset was published.</td>
   </tr>
-</table>
-
-#### Recommended
-
-These [schema.org](http://schema.org) properties are recommended for every Croissant dataset.
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Comments</th>
-  </thead>
+  <tr><td><b>Recommended</b></td></tr>
   <tr>
     <td><a href="http://schema.org/keywords">keywords</a></td>
     <td>
@@ -519,24 +508,7 @@ These [schema.org](http://schema.org) properties are recommended for every Crois
     <td>MANY</td>
     <td>The language(s) of the content of the dataset.</td>
   </tr>
-</table>
-
-#### Other schema.org Properties
-
-Other properties from [schema.org/Dataset](http://schema.org/Dataset) or its parent classes can also be specified for Croissant datasets. Dataset authors should decide whether they are useful for their datasets or not.
-
-### Modified and Added Properties
-
-Croissant modifies the meaning of one [schema.org](http://schema.org) property, and requires its presence:
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Comments</th>
-  </thead>
-  <tr>
+  <tr><td><b>Modified</b></td></tr>
     <td><a href="http://schema.org/distribution">distribution</a></td>
     <td>
       <a href="#fileobject">FileObject</a><br>
@@ -545,17 +517,7 @@ Croissant modifies the meaning of one [schema.org](http://schema.org) property, 
     <td>MANY</td>
     <td>By contrast with <a href="http://schema.org/Dataset">schema.org/Dataset</a>, Croissant requires the distribution property to have values of type FileObject or FileSet.</td>
   </tr>
-</table>
-
-The Croissant vocabulary also defines the following optional attributes:
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Comments</th>
-  </thead>
+  <tr><td><b>Optional</b></td></tr>
   <tr>
     <td><a href="#live-datasets">isLiveDataset</a></td>
     <td><a href="http://schema.org/Boolean">Boolean</a></td>
@@ -690,22 +652,12 @@ Most of the important properties needed to describe a `FileObject` are defined i
     <td>ONE</td>
     <td>Checksum for the file contents.</td>
   </tr>
-</table>
-
-In addition, `FileObject` defines the following property:
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Description</th>
-  </thead>
+  <tr><td><b>Additional</b></td></tr>
   <tr>
     <td>containedIn</td>
     <td><a href="http://schema.org/Text">Text</a></td>
     <td>MANY</td>
-    <td>Another <code>FileObject</code> or <code>FileSet</code> that this one is contained in, e.g., in the case of a file extracted from an archive. When this property is present, the <code>contentUrl</code> is evaluated as a relative path within the container object.</td>
+    <td>One or more <code>FileObject</code> or <code>FileSet</code> that this one is contained in, e.g., in the case of a file extracted from an archive. When this property is present, the <code>contentUrl</code> is evaluated as a relative path within the container object.</td>
   </tr>
 </table>
 
@@ -781,6 +733,12 @@ A `FileSet` is a set of files located in a container, which can be an archive `F
     <td><a href="http://schema.org/Text">Text</a></td>
     <td>MANY</td>
     <td>A glob pattern that specifies the files to exclude.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/encodingFormat">sc:encodingFormat</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>MANY</td>
+    <td>The formats of the file, given as a mime type. Unregistered or niche encoding and file formats can be indicated instead via the most appropriate URL, e.g. defining Web page or a Wikipedia/Wikidata entry.</td>
   </tr>
 </table>
 
