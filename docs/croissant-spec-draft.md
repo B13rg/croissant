@@ -110,9 +110,9 @@ Croissant is designed to be modular and extensible. One such extension is the Cr
 
 **Dataset**: A collection of data points or items reflecting the results of such activities as measuring, reporting, collecting, analyzing, or observing.  Described by `FileObject` and `FileSet` resources.
 
-**FileObject**: A single file, such as an image, PDF, video, or archive (.zip, .tar.gz).
+**FileObject**: A single data resource file, such as an image, PDF, video, or archive (.zip, .tar.gz).
 
-**FileSet**: A set of homogeneous files such as images, videos, text files.
+**FileSet**: A set of homogeneous data resource files, such as images, videos, text files.
 
 **RecordSet**: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.
 
@@ -140,11 +140,13 @@ Croissant metadata is encoded in JSON-LD.
   "citeAs": "@Article{asano21pass, author = \"Yuki M. Asano and Christian Rupprecht and ...",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "url": "https://www.robots.ox.ac.uk/~vgg/data/pass/",
+  ...
 ```
 
 The beginning of the Croissant description contains general information about the dataset such as name, short description, license and URL. Most of these attributes are from [schema.org](http://schema.org), with a few additions described in the [Dataset-level information](#dataset-level-information) section.
 
 ```json
+  ...
   "distribution": [
     {
       "@type": "cr:FileObject",
@@ -168,6 +170,7 @@ The beginning of the Croissant description contains general information about th
       "includes": "*.jpg"
     }
   ],
+  ...
 ```
 
 The distribution property contains a description of the resources contained in the dataset, i.e., :
@@ -178,6 +181,7 @@ The distribution property contains a description of the resources contained in t
 See the [Resources](#resources) section for a complete description.
 
 ```json
+  ...
   "recordSet": [
     {
       "@type": "cr:RecordSet",
@@ -222,6 +226,7 @@ See the [Resources](#resources) section for a complete description.
       ]
     }
   ]
+}
 ```
 
 Furthermore, we can describe the structure and the data types in the data using a simple schema called `RecordSet`. In this example, the dataset defines a single `RecordSet`, with one record per image in the dataset. Each record has 3 fields:
