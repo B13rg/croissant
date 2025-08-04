@@ -39,33 +39,33 @@ The Croissant metadata format simplifies how data is used by ML models. It provi
     - [Portability and Reproducibility](#portability-and-reproducibility)
     - [Responsible AI](#responsible-ai)
     - [Terminology](#terminology)
-    - [Format Example](#format-example)
+    - [Usage Example](#usage-example)
   - [Prerequisites](#prerequisites)
     - [Namespaces](#namespaces)
     - [ID and Reference Mechanism](#id-and-reference-mechanism)
     - [Croissant in Web Pages](#croissant-in-web-pages)
   - [Dataset-level Information](#dataset-level-information)
-    - [Croissant Dataset](#croissant-dataset)
+    - [Croissant Dataset Class](#croissant-dataset-class)
     - [Dataset Versioning/Checkpoints](#dataset-versioningcheckpoints)
     - [Live Datasets](#live-datasets)
   - [Resources](#resources)
-    - [FileObject](#fileobject)
-    - [FileSet](#fileset)
+    - [FileObject Class](#fileobject-class)
+    - [FileSet Class](#fileset-class)
   - [RecordSets](#recordsets)
-    - [RecordSet](#recordset)
-    - [Field](#field)
-    - [DataSource](#datasource)
+    - [RecordSet Class](#recordset-class)
+    - [Field Class](#field-class)
+    - [DataSource Class](#datasource-class)
     - [Data Types](#data-types)
     - [Embedding data](#embedding-data)
     - [Joins](#joins)
-    - [Annotating Data](#annotating-data)
+  - [Annotating Data](#annotating-data)
     - [Hierarchical RecordSets](#hierarchical-recordsets)
-  - [ML-specific Features](#ml-specific-features)
-    - [Categorical Data](#categorical-data)
-    - [Splits](#splits)
-    - [Label Data](#label-data)
-    - [BoundingBox](#boundingbox)
-    - [SegmentationMask](#segmentationmask)
+    - [ML-specific Features](#ml-specific-features)
+    - [Enumeration Type](#enumeration-type)
+    - [Splits Type](#splits-type)
+    - [Label Data Type](#label-data-type)
+    - [BoundingBox Type](#boundingbox-type)
+    - [SegmentationMask Type](#segmentationmask-type)
   - [Appendix 1: JSON-LD context](#appendix-1-json-ld-context)
   - [Appendix 2: Mermaid Diagram](#appendix-2-mermaid-diagram)
 
@@ -121,7 +121,7 @@ Croissant is designed to be modular and extensible. One such extension is the Cr
 **DataSource**: Links data resources to `RecordSets`, and captures extraction and  transformation methods.
 
 
-### Format Example
+### Usage Example
 
 To understand the various pieces of a Croissant dataset description, let's look at an example, based on the [PASS](https://www.robots.ox.ac.uk/~vgg/data/pass/) dataset.
 
@@ -235,7 +235,7 @@ Furthermore, we can describe the structure and the data types in the data using 
 - the hash of the image, extracted from its filename
 - the date the image was taken, extracted from the metadata CSV file
 
-The [RecordSets](#recordsets) section explains how to define recordsets and fields, as well as extract, transform and join their data.
+The [RecordSets](#recordsets) section explains how to define `RecordSets` and `Fields`, as well as how to `extract`, `transform` and `join` their data using `DataSource` objects.
 
 ## Prerequisites
 
@@ -365,7 +365,7 @@ Croissant builds on the [schema.org/Dataset](http://schema.org/Dataset) vocabula
 
 We organize [schema.org](http://schema.org) properties in three categories: Required, recommended and other properties. The properties starting with the symbol `@` are defined in JSON-LD, which is our RDF syntax of choice for Croissant.
 
-### Croissant Dataset
+### Croissant Dataset Class
 
 The following list of properties from [schema.org](http://schema.org) must be specified for every Croissant dataset.
 
@@ -541,7 +541,7 @@ The following list of properties from [schema.org](http://schema.org) must be sp
 
 Datasets may change over time. Versioning is hence important to enable reproducibility and reliable documentation. For this, Croissant uses the combination of two elements: a version, and files checksums.
 
-#### Version
+#### Versioning Strategy
 
 Croissant datasets are versioned using the `version` property defined in [schema.org](http://schema.org). The recommended versioning scheme to use for datasets is`MAJOR.MINOR.PATCH`, following [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html). More specifically:
 
@@ -604,7 +604,7 @@ While [schema.org/Dataset](http://schema.org/Dataset) defines a `distribution` p
 
 In Croissant, the `distribution` property contains one or more `FileObject` or `FileSet` instead of schema.org's `DataDownload.`
 
-### FileObject
+### FileObject Class
 
 `FileObject` is the Croissant class used to represent individual files that are part of a dataset.
 
@@ -704,7 +704,7 @@ Next: An archive and some files extracted from it (represented via the `containe
 }
 ```
 
-### FileSet
+### FileSet Class
 
 In many datasets, data comes in the form of collections of homogeneous files, such as images, videos or text files, where each file needs to be treated as an individual item, e.g., as a training example. `FileSet` is a class that describes such collections of files.
 
@@ -825,7 +825,7 @@ A key challenge is that ML data comes in many different formats, including unstr
 
 Let's introduce the relevant classes first, before illustrating how they are used through examples.
 
-### RecordSet
+### RecordSet Class
 
 A `RecordSet` describes a set of structured records obtained from one or more data sources (typically a file or set of files) and the structure of these records, expressed as a set of fields (e.g., the columns of a table). A `RecordSet` can represent flat or nested data.
 
@@ -859,6 +859,12 @@ In addition to `Field`s, RecordSet also supports defining a `key` for the record
     <td>One or more records that constitute the data of the <code>RecordSet</code>.</td>
   </tr>
   <tr>
+    <td>dataType</td>
+    <td>DataType</td>
+    <td>MANY</td>
+    <td>Specify a DataType that each record conforms to, as well as mandatory fields. Refer to the section on [Data Types](#data-types)</td>
+  </tr>
+  <tr>
     <td>examples</td>
     <td>
       JSON<br>
@@ -877,7 +883,7 @@ In addition to `Field`s, RecordSet also supports defining a `key` for the record
   </tr>
 </table>
 
-### Field
+### Field Class
 
 A `Field` is part of a `RecordSet`. It may represent a column of a table, or a nested data structure.
 
@@ -1019,7 +1025,7 @@ Let's see a simple example: The ratings `RecordSet` below defines the fields use
 
 The ratings `RecordSet` above corresponds to a CSV table, declared elsewhere as a ratings table `FileObject`. Each field specifies as a source the corresponding column of the CSV file.
 
-### DataSource
+### DataSource Class
 
 `RecordSet`s specify where to get their data via the `dataSource` property of Field. `DataSource` is the class describing the data that can be extracted from files to populate a `RecordSet`. This class should be used when the data coming from the source needs to be transformed or formatted to be included in the ML dataset; otherwise a simple `Reference` can be used instead to point to the source.
 
@@ -1072,7 +1078,7 @@ The ratings `RecordSet` above corresponds to a CSV table, declared elsewhere as 
 
 We now describe each of these properties and the corresponding classes in more detail.
 
-#### Extract
+#### Extract Class
 
 Sometimes, not all the data from the source is needed, but only a subset. The `Extract` class can be used to specify how to do that, depending on the type of the data. Here is a breakdown:
 
@@ -1115,9 +1121,9 @@ Sometimes, not all the data from the source is needed, but only a subset. The `E
 
 Croissant supports a few simple transformations that can be applied on the source data:
 
-- delimiter: split a string into an array using the supplied character.
-- regex: A regular expression to parse the data.
-- jsonPath: A JSON path to evaluate on the (JSON) data source.
+- **delimiter**: split a string into an array using the supplied character.
+- **regex**: A regular expression to parse the data.
+- **jsonPath**: A JSON path to evaluate on the (JSON) data source.
 
 For example, to extract information from a filename using a regular expression, we can write:
 
@@ -1135,7 +1141,7 @@ For example, to extract information from a filename using a regular expression, 
 }
 ```
 
-#### Format
+#### Format 
 
 A format string used to parse the values coming from a `DataSource`. For example, a date may be represented as the string "2022/11/10", and interpreted into the correct date via the format "yyyy/MM/dd". Formats correspond to a target data type.
 
@@ -1175,22 +1181,25 @@ Note that this list is not exhaustive, and not all Croissant implementations wil
 
 ### Data Types
 
-Specifying data types on the `Fields` of `RecordSets` is crucial for data validation, and downstream processing, e.g., to enable ML frameworks to automatically populate the right data structures when loading datasets.
+Specifying data types on the `Fields` of `RecordSets` is crucial for data validation and downstream processing, e.g., to enable ML frameworks to automatically populate the right data structures when loading datasets.
 
-Croissant supports two kinds of data types: simple, atomic data types such as integers and strings, and semantic data types, which convey more meaning and can be structured (more on that below).
+Croissant supports two kinds of data types: 
+
+- Simple, atomic data types such as integers and strings.
+- Semantic data types, which convey more meaning and can be structured.
 
 Data types can be specified at two levels:
 
 - On individual `Field`s, to specify a type that each value of that specific field will conform to. This is a standard notion of typing, similar to, say, assigning a type to a column in a database table.
 - On an entire `RecordSet`, to specify a type that each record conforms to, as well as possibly mandatory fields.
 
-#### DataType
+#### DataType Class
 
-The data type of values expected for a `Field` in a `RecordSet`. This class is inspired by the `Datatype` class in [CSVW](https://csvw.org/). In addition to simple atomic types, types can be semantic types, such as `schema.org` classes, as well types defined in other vocabularies.
+The variety of values expected in a `dataType` property on a `Field` or `RecordSet`. This class is inspired by the `Datatype` class in [CSVW](https://csvw.org/). In addition to simple atomic types, semantic types such as `schema.org` classes as well types defined in other vocabularies can be used.
 
 A field may have more than a single assigned `dataType`, in which case at least one must be an atomic data type (e.g.: `sc:Text`), while other types can provide more semantic information, possibly in the context of ML.
 
-Commonly used atomic data types:
+Commonly used data types:
 
 <table>
   <thead>
@@ -1252,11 +1261,11 @@ Commonly used atomic data types:
   </tr>
     <tr>
     <td><a href="http://schema.org/GeoShape">sc:GeoShape</a></td>
-    <td> </td>
+    <td>A Schema.org Type. The geographic shape of a place. A GeoShape can be described using several properties whose values are based on latitude/longitude pairs.</td>
   </tr>
 </table>
 
-#### Using data types from other vocabularies
+#### Using Data Types from Other Vocabularies
 
 Croissant datasets can use data types from other vocabularies, such as Wikidata. These may be supported by the tools consuming the data, but don’t need to. For example:
 
@@ -1504,7 +1513,7 @@ While the above example joins two tabular files, joining is also possible betwee
 ]
 ```
 
-### Annotating Data
+## Annotating Data
 
 Annotations are a general mechanism to attach additional information to other pieces of data. Annotations can be used in multiple use cases, including: statistics, provenance (including human annotator information), labels (textual or otherwise).
 
@@ -1550,9 +1559,12 @@ Annotations can also appear at the level of a RecordSet. A RecordSet-level annot
 
 Croissant `RecordSet`s provide two mechanisms to represent hierarchical data:
 
+* Nested fields via the `subField` property
+* Categorization via the `enumeration` dataType
+
 #### Nested Fields
 
-`Field`s may be nested inside other fields, via the `subField` property, which makes it possible to group fields logically inside records: for example, a field of type `sc:GeoCoordinates` may have two `subField`s: latitude and longitude. Here is what it looks like:
+`Field`s may be nested inside other fields, via the `subField` property, which makes it possible to group fields logically inside records: for example, a field of type `sc:GeoCoordinates` may have two `subField`s: `latitude` and `longitude`. Here is what it looks like:
 
 ```json
 {
@@ -1587,11 +1599,11 @@ Note that the values of these fields may still come from a "flat" source, such a
 
 Furthermore the field ids "gps_coordinates/latitude" and "gps_coordinates/longitude" are not arbitrary: they correspond to the "latitude" and "longitude" properties associated with the [sc:GeoCoordinates](http://schema.org/GeoCoordinates) type. This uses the same property mapping mechanism we introduced in Section [Typing RecordSets](#typing-recordsets).
 
-## ML-specific Features
+### ML-specific Features
 
 We now introduce a number of features that are useful in the context of ML data. These are implemented using the primitives defined in the previous sections, generally as new classes or properties defined in the Croissant namespace. ML-specific features are experimental and subject to change based on the needs of ML users.
 
-### Categorical Data
+### Enumeration Type
 
 In machine learning applications, it's often useful to know that some of the data is categorical in nature, and has a finite set of values that can be used, say, for classification. Croissant represents that information by using the [sc:Enumeration](https://schema.org/Enumeration) class from [schema.org](https://schema.org), as a `dataType` on `RecordSet`s that hold categorical data.
 
@@ -1676,7 +1688,7 @@ Finally, the following example shows an enumeration featuring the `url` field to
 }
 ```
 
-### Splits
+### Splits Type
 
 ML datasets may come in [different data splits, intended to be used for different steps of a model building](https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets), usually training, validation and test.
 
@@ -1732,7 +1744,7 @@ Once a datasets splits have been defined, any `RecordSet` can refer to those usi
 
 Note that the field here is named "split", but doesn’t need to: the information of this being a ML split comes from the `dataType` of the `RecordSet` it refers to. As one would expect, tools working with the Croissant config format can infer the data files needed for each split. So if a user requests loading only the validation split of the COCO 2014 dataset, the tool working with Croissant knows to download the file "val2014.zip", but not "train2014.zip" and "test2014.zip".
 
-### Label Data
+### Label Data Type
 
 Most ML workflows use label data. In Croissant, we identify label data using the class `cr:Label`. Labels will typically appear as fields in a `RecordSet`. The default semantics is that labels apply to the record they are defined in.
 
@@ -1795,7 +1807,7 @@ The `cr:Label` data type can also be applied to a complex Field that contains mu
 }
 ```
 
-### BoundingBox
+### BoundingBox Type
 
 Bounding boxes are common annotations in computer vision. They describe imaginary rectangles that outline objects or groups of objects in images or videos. Croissant defines the type `cr:BoundingBox` that interprets any 4-float array as a bounding box. In order to interpret the values, Croissant supports adding a format specification using the [Keras bounding box format](https://keras.io/api/keras_cv/bounding_box/formats/), specified through the property `cr:format`.
 
@@ -1813,7 +1825,7 @@ Bounding boxes are common annotations in computer vision. They describe imaginar
 }
 ```
 
-### SegmentationMask
+### SegmentationMask Type
 
 Segmentation masks are common annotations in computer vision. They describe pixel-perfect zones that outline objects or groups of objects in images or videos. Croissant defines `cr:SegmentationMask` with two manners to describe them:
 
