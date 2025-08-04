@@ -1225,15 +1225,7 @@ Commonly used atomic data types:
     <td><a href="https://schema.org/Text">sc:Text</a></td>
     <td>Describes a string.</td>
   </tr>
-</table>
-
-Other data types commonly used in ML datasets:
-
-<table>
-  <thead>
-    <th>dataType</th>
-    <th>Usage</th>
-  </thead>
+  <tr><th><b>Other data types commonly used in ML datasets</b></th></tr>
   <tr>
     <td><a href="https://schema.org/ImageObject">sc:ImageObject</a></td>
     <td>Describes a field containing the content of an image (pixels).</td>
