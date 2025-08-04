@@ -1231,12 +1231,28 @@ Commonly used atomic data types:
     <td>Describes a field containing the content of an image (pixels).</td>
   </tr>
   <tr>
+    <td><a href="http://schema.org/Enumeration">sc:Enumeration</a></td>
+    <td> Refer to the section "ML-Specific Features > [Categorical Data](#categorical-data)".</td>
+  </tr>
+  <tr>
     <td><a href="http://mlcommons.org/schema/BoundingBox">cr:BoundingBox</a></td>
-    <td>Describes the coordinates of a bounding box (4-number array). Refer to the section "ML-specific features > Bounding boxes".</td>
+    <td>Describes the coordinates of a bounding box (4-number array). Refer to the section "ML-Specific Features > [Bounding boxes](#boundingbox)".</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/SegmentationMask">cr:SegmentationMask</a></td>
+    <td> Refer to the section "ML-Specific Features > [Segmentation Mask](#segmentationmask)".</td>
   </tr>
   <tr>
     <td><a href="http://mlcommons.org/schema/Split">cr:Split</a></td>
-    <td>Describes a RecordSet used to divide data into multiple sets according to intended usage with regards to models. Refer to the section "ML-specific features > Splits".</td>
+    <td>Describes a RecordSet used to divide data into multiple sets according to intended usage with regards to models. Refer to the section "ML-Specific Features > [Splits](#splits)".</td>
+  </tr>
+    <tr>
+    <td>cr:Label</td>
+    <td> Refer to the section "ML-Specific Features > [Label Data](#label-data)".</td>
+  </tr>
+    <tr>
+    <td><a href="http://schema.org/GeoShape">sc:GeoShape</a></td>
+    <td> </td>
   </tr>
 </table>
 
