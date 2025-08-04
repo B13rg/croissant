@@ -1587,7 +1587,7 @@ We now introduce a number of features that are useful in the context of ML data.
 
 In machine learning applications, it's often useful to know that some of the data is categorical in nature, and has a finite set of values that can be used, say, for classification. Croissant represents that information by using the [sc:Enumeration](https://schema.org/Enumeration) class from [schema.org](https://schema.org), as a `dataType` on `RecordSet`s that hold categorical data.
 
-These RecordSets must define a `name` field conforming with the [sc:name](https://schema.org/name) definition, i.e. a human-readable text naming the item. They must also specify a key to identify each possible instance. Enumerations should have a `url` field, which can also be used to uniquely refer to each instance.
+These RecordSets must define a `@id` field conforming with the [sc:name](https://schema.org/name) definition, i.e. a human-readable text naming the item. They must also specify a `key` to identify each possible instance. Enumerations should have a `url` field, which can also be used to uniquely refer to each instance.
 
 For example, the [COCO](https://cocodataset.org/#format-data) dataset defines categories and super-categories ([Croissant definition](https://github.com/mlcommons/croissant/blob/main/datasets/1.0/coco2014/metadata.json)), to which are associated other parts of the dataset. Using Croissant, one can describe the COCO super-categories the following way:
 
