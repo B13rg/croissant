@@ -1160,7 +1160,7 @@ The variety of values expected in a `dataType` property on a `Field` or `RecordS
 
 A field may have more than a single assigned `dataType`, in which case at least one must be an atomic data type (e.g.: `sc:Text`), while other types can provide more semantic information, possibly in the context of ML.
 
-Commonly used data types:
+Commonly used atomic data types:
 
 <table>
   <thead>
@@ -1195,7 +1195,15 @@ Commonly used data types:
     <td><a href="https://schema.org/Text">sc:Text</a></td>
     <td>Describes a string.</td>
   </tr>
-  <tr><th><b>Other data types commonly used in ML datasets</b></th></tr>
+</table>
+
+Other data types commonly used in ML datasets:
+
+<table>
+  <thead>
+  <th>dataType</th>
+  <th>Usage</th>
+  </thead>
   <tr>
     <td><a href="https://schema.org/ImageObject">sc:ImageObject</a></td>
     <td>Describes a field containing the content of an image (pixels).</td>
