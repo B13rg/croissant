@@ -475,8 +475,8 @@ The following list of properties from [schema.org](http://schema.org) must be sp
   <tr><td><b>Modified</b></td></tr>
     <td><a href="http://schema.org/distribution">distribution</a></td>
     <td>
-      <a href="#fileobject">FileObject</a><br>
-      <a href="#fileset">FileSet</a>
+      <a href="#fileobject-class">FileObject</a><br>
+      <a href="#fileset-class">FileSet</a>
     </td>
     <td>MANY</td>
     <td>By contrast with <a href="http://schema.org/Dataset">schema.org/Dataset</a>, Croissant requires the distribution property to have values of type FileObject or FileSet.</td>
@@ -608,7 +608,7 @@ Most of the important properties needed to describe a `FileObject` are defined i
     <td><a href="https://schema.org/sameAs">sc:sameAs</a></td>
     <td><a href="http://schema.org/URL">URL</a></td>
     <td>MANY</td>
-    <td>URL (or local name) of a FileObject with the same content, but in a different format.</td>
+    <td>URL (or local name) of a <code>FileObject</code> with the same content, but in a different format.</td>
   </tr>
   <tr>
     <td><a href="https://schema.org/sha256">sc:sha256</a></td>
@@ -619,9 +619,9 @@ Most of the important properties needed to describe a `FileObject` are defined i
   <tr><td><b>Additional</b></td></tr>
   <tr>
     <td>containedIn</td>
-    <td><a href="http://schema.org/Text">Text</a></td>
+    <td><a href="http://schema.org/URL">URL</a></td>
     <td>MANY</td>
-    <td>One or more <code>FileObject</code> or <code>FileSet</code> that this one is contained in, e.g., in the case of a file extracted from an archive. When this property is present, the <code>contentUrl</code> is evaluated as a relative path within the container object.</td>
+    <td>One or more <code>FileObject</code> or <code>FileSet</code> URLs (or local names) that this one is contained in, e.g., in the case of a file extracted from an archive. When this property is present, the <code>contentUrl</code> is evaluated as a relative path within the container object.</td>
   </tr>
 </table>
 
@@ -1902,11 +1902,11 @@ classDiagram
     FileObject -- "many" FileSet : containedIn
     FileSet -- "many" FileObject : containedIn
 
-    Field -- "1" DataSource : source
+    Field -- "one" DataSource : source
 
-    DataSource -- "1" FileObject : fileObject
-    DataSource -- "1" FileSet : fileSet
-    DataSource -- "1" RecordSet : recordSet
+    DataSource -- "one" FileObject : fileObject
+    DataSource -- "one" FileSet : fileSet
+    DataSource -- "one" RecordSet : recordSet
 
 
     class Dataset {
