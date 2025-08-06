@@ -31,46 +31,6 @@ Datasets are the basis of machine learning (ML). However, a lack of standardizat
 
 The Croissant metadata format simplifies how data is used by ML models. It provides a vocabulary for dataset attributes, streamlining how data is loaded across ML frameworks such as PyTorch, TensorFlow or JAX. In doing so, Croissant enables the interchange of datasets between ML frameworks and beyond, tackling a variety of **discoverability**, **portability**, **reproducibility**, and **responsible AI (RAI)** challenges.
 
-### Table of Contents
-
-- [Croissant Format Specification (draft)](#croissant-format-specification-draft)
-  - [Introduction](#introduction)
-    - [Table of Contents](#table-of-contents)
-    - [Discoverability](#discoverability)
-    - [Portability and Reproducibility](#portability-and-reproducibility)
-    - [Responsible AI](#responsible-ai)
-    - [Terminology](#terminology)
-    - [Usage Example](#usage-example)
-  - [Prerequisites](#prerequisites)
-    - [Namespaces](#namespaces)
-    - [ID and Reference Mechanism](#id-and-reference-mechanism)
-    - [Croissant in Web Pages](#croissant-in-web-pages)
-  - [Dataset-level Information](#dataset-level-information)
-    - [Croissant Dataset Class](#croissant-dataset-class)
-    - [Dataset Versioning/Checkpoints](#dataset-versioningcheckpoints)
-    - [Live Datasets](#live-datasets)
-  - [Resources](#resources)
-    - [FileObject Class](#fileobject-class)
-    - [FileSet Class](#fileset-class)
-  - [RecordSets](#recordsets)
-    - [RecordSet Class](#recordset-class)
-    - [Field Class](#field-class)
-    - [DataSource Class](#datasource-class)
-    - [Data Types](#data-types)
-    - [Embedding data](#embedding-data)
-    - [Joins](#joins)
-  - [Annotating Data](#annotating-data)
-    - [Hierarchical RecordSets](#hierarchical-recordsets)
-    - [ML-specific Features](#ml-specific-features)
-    - [Enumeration Type](#enumeration-type)
-    - [Splits Type](#splits-type)
-    - [Label Data Type](#label-data-type)
-    - [BoundingBox Type](#boundingbox-type)
-    - [SegmentationMask Type](#segmentationmask-type)
-  - [Appendix 1: JSON-LD context](#appendix-1-json-ld-context)
-  - [Appendix 2: Mermaid Diagram](#appendix-2-mermaid-diagram)
-
-
 ### Discoverability
 
 Once a dataset has Croissant metadata attached to it, dataset search engines can parse this metadata, allowing users to find and use the datasets they need no matter where these datasets have been published (**Figure 1**). For dataset creators, it means their data is discoverable no matter where it is made available online, as long as they use the format.
