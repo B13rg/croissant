@@ -65,17 +65,24 @@ This is how Croissant helps address RAI:
 
 Croissant is designed to be modular and extensible. One such extension is the Croissant RAI vocabulary, which addresses 7 specific use cases, starting with the data life cycle, data labeling, and participatory scenarios to AI safety and fairness evaluation, traceability, regulatory compliance and inclusion. More details are available in the [Croissant RAI specification](http://mlcommons.org/croissant/RAI/1.0). We welcome additional extensions from the community to meet the needs of specific data modalities (e.g. audio or video) and domains (e.g. geospatial, life sciences, cultural heritage).
 
-## Terminology
+### Terminology
 
-**Dataset**: A collection of data points or items reflecting the results of such activities as measuring, reporting, collecting, analyzing, or observing.
+**Croissant dataset**: A dataset that comes with a description in the Croissant format. The Croissant file contains dataset metadata, dataset file data, record properties / relations, and derived data properties.
 
-**Croissant dataset**: A dataset that comes with a description in the Croissant format. Note that the Croissant description of a dataset does not generally contain the actual data of the dataset (with the exception of small examples or enumerations). The data itself is contained in separate files, referenced by the Croissant dataset description.
+**Dataset**: A collection of data points or items reflecting the results of such activities as measuring, reporting, collecting, analyzing, or observing.  Described by `FileObject` and `FileSet` resources.
 
-**Data record**: A granular part of a dataset, such as an image, text file, or a row in a table.
+**FileObject**: A single data resource file, such as an image, PDF, video, or archive (.zip, .tar.gz).
 
-**Recordset**: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.
+**FileSet**: A set of homogeneous data resource files, such as images, videos, text files.
 
-## Format Example
+**RecordSet**: A set of homogeneous data records, such as a collection of images, text files, or all the rows in a table.  Describes the data contained in a Dataset.
+
+**Field**: A granular part of a `RecordSet`, such as a text file, image/video metadata, or a column in a table.
+
+**DataSource**: Links data resources to `RecordSets`, and captures extraction and  transformation methods.
+
+
+### Usage Example
 
 To understand the various pieces of a Croissant dataset description, let's look at an example, based on the [PASS](https://www.robots.ox.ac.uk/~vgg/data/pass/) dataset.
 
@@ -94,11 +101,13 @@ Croissant metadata is encoded in JSON-LD.
   "citeAs": "@Article{asano21pass, author = \"Yuki M. Asano and Christian Rupprecht and ...",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "url": "https://www.robots.ox.ac.uk/~vgg/data/pass/",
+  ...
 ```
 
 The beginning of the Croissant description contains general information about the dataset such as name, short description, license and URL. Most of these attributes are from [schema.org](http://schema.org), with a few additions described in the [Dataset-level information](#dataset-level-information) section.
 
 ```json
+  ...
   "distribution": [
     {
       "@type": "cr:FileObject",
@@ -122,6 +131,7 @@ The beginning of the Croissant description contains general information about th
       "includes": "*.jpg"
     }
   ],
+  ...
 ```
 
 The distribution property contains a description of the resources contained in the dataset, i.e., :
@@ -132,6 +142,7 @@ The distribution property contains a description of the resources contained in t
 See the [Resources](#resources) section for a complete description.
 
 ```json
+  ...
   "recordSet": [
     {
       "@type": "cr:RecordSet",
@@ -176,6 +187,7 @@ See the [Resources](#resources) section for a complete description.
       ]
     }
   ]
+}
 ```
 
 Furthermore, we can describe the structure and the data types in the data using a simple schema called `RecordSet`. In this example, the dataset defines a single `RecordSet`, with one record per image in the dataset. Each record has 3 fields:
@@ -184,7 +196,7 @@ Furthermore, we can describe the structure and the data types in the data using 
 - the hash of the image, extracted from its filename
 - the date the image was taken, extracted from the metadata CSV file
 
-The [RecordSets](#recordsets) section explains how to define recordsets and fields, as well as extract, transform and join their data.
+The [RecordSets](#recordsets) section explains how to define `RecordSets` and `Fields`, as well as how to `extract`, `transform` and `join` their data using `DataSource` objects.
 
 ## Prerequisites
 
@@ -308,15 +320,13 @@ In the rest of this document, we only describe the actual JSON-LD of Croissant m
 
 ## Dataset-level Information
 
-### schema.org/Dataset
-
 Croissant builds on the [schema.org/Dataset](http://schema.org/Dataset) vocabulary, which is widely adopted by datasets on the web. An introduction to describing datasets with this vocabulary can be found [here](https://developers.google.com/search/docs/appearance/structured-data/dataset).
 
 [Schema.org](http://Schema.org) properties are known to be very flexible in terms of the types of values they accept. We list below the main properties of the vocabulary and their expected type.To facilitate more consistent use of these properties we provide additional constraints on their usage in the context of Croissant datasets. We also specify cardinalities to clarify if a property can take one or many values.
 
 We organize [schema.org](http://schema.org) properties in three categories: Required, recommended and other properties. The properties starting with the symbol `@` are defined in JSON-LD, which is our RDF syntax of choice for Croissant.
 
-#### Required
+### Croissant Dataset Class
 
 The following list of properties from [schema.org](http://schema.org) must be specified for every Croissant dataset.
 
@@ -327,6 +337,7 @@ The following list of properties from [schema.org](http://schema.org) must be sp
     <th>Cardinality</th>
     <th>Comments</th>
   </thead>
+  <tr><td><b>Required</b></td></tr>
   <tr>
     <td>@context</td>
     <td><a href="http://schema.org/URL">URL</a></td>
@@ -390,19 +401,7 @@ The following list of properties from [schema.org](http://schema.org) must be sp
     <td>ONE</td>
     <td>The date the dataset was published.</td>
   </tr>
-</table>
-
-#### Recommended
-
-These [schema.org](http://schema.org) properties are recommended for every Croissant dataset.
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Comments</th>
-  </thead>
+  <tr><td><b>Recommended</b></td></tr>
   <tr>
     <td><a href="http://schema.org/keywords">keywords</a></td>
     <td>
@@ -429,7 +428,7 @@ These [schema.org](http://schema.org) properties are recommended for every Crois
       <a href="http://schema.org/Text">Text</a>
     </td>
     <td>ONE</td>
-    <td>The version of the dataset following the requirements below.</td>
+    <td>The recommended versioning scheme to use for datasets is`MAJOR.MINOR.PATCH`, following [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)</td>
   </tr>
   <tr>
     <td><a href="http://schema.org/dateCreated">dateCreated</a></td>
@@ -473,43 +472,16 @@ These [schema.org](http://schema.org) properties are recommended for every Crois
     <td>MANY</td>
     <td>The language(s) of the content of the dataset.</td>
   </tr>
-</table>
-
-#### Other schema.org Properties
-
-Other properties from [schema.org/Dataset](http://schema.org/Dataset) or its parent classes can also be specified for Croissant datasets. Dataset authors should decide whether they are useful for their datasets or not.
-
-### Modified and Added Properties
-
-Croissant modifies the meaning of one [schema.org](http://schema.org) property, and requires its presence:
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Comments</th>
-  </thead>
-  <tr>
+  <tr><td><b>Modified</b></td></tr>
     <td><a href="http://schema.org/distribution">distribution</a></td>
     <td>
-      <a href="#fileobject">FileObject</a><br>
-      <a href="#fileset">FileSet</a>
+      <a href="#fileobject-class">FileObject</a><br>
+      <a href="#fileset-class">FileSet</a>
     </td>
     <td>MANY</td>
     <td>By contrast with <a href="http://schema.org/Dataset">schema.org/Dataset</a>, Croissant requires the distribution property to have values of type FileObject or FileSet.</td>
   </tr>
-</table>
-
-The Croissant vocabulary also defines the following optional attributes:
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Comments</th>
-  </thead>
+  <tr><td><b>Optional</b></td></tr>
   <tr>
     <td><a href="#live-datasets">isLiveDataset</a></td>
     <td><a href="http://schema.org/Boolean">Boolean</a></td>
@@ -530,7 +502,7 @@ The Croissant vocabulary also defines the following optional attributes:
 
 Datasets may change over time. Versioning is hence important to enable reproducibility and reliable documentation. For this, Croissant uses the combination of two elements: a version, and files checksums.
 
-#### Version
+#### Versioning Strategy
 
 Croissant datasets are versioned using the `version` property defined in [schema.org](http://schema.org). The recommended versioning scheme to use for datasets is`MAJOR.MINOR.PATCH`, following [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html). More specifically:
 
@@ -544,13 +516,13 @@ Each one of the `FileObject`s in a Croissant file may provide a checksum using t
 
 In versioned datasets, it is strongly recommended to record such checksums for all used `FileObject`s, as it allows for robustly checking whether the downloaded files correspond to the ones which are declared in the Croissant definition.
 
-#### Live Datasets
+### Live Datasets
 
 Live datasets constitute a special form of datasets. The term refers to non-static datasets, whose underlying data evolves continuously (for example, a new snapshot of data is released regularly). However, apart from the underlying change of the data, the logic behind the example generation (e.g. the way the data is extracted, the transformations it undergoes, the main attributes that are collected etc.) is usually stable over time.
 
 For live datasets, the Croissant boolean property `isLiveDataset` should be set to True. Moreover, Croissant recommends not to specify checksum on files which are expected to be updated in the future. For example, if a dataset contains one file per calendar day, days that have already occurred in the past are not expected to change and should provide a checksum. However, if the data for the current day is being refreshed hourly, the Croissant file should not have a checksum until the file is no longer expected to be updated. Failing to update the checksum for an updated file may result in the implementation throwing a checksum error. For live datasets, applications are expected to be aware that the dataset is live and subject to changes going forward. For example, to maintain reproducibility, an application should filter data by dates if new data is added over time. Croissant recommends only updating the `version` property if the dataset structure changes or a backwards-incompatible change is made. For example, if files are updated to reflect more recent data with no other semantic changes, the dataset `version` should not be updated. However, if an update is a major semantic change for users, updating the version property may be appropriate.
 
-##### Example 1: Daily refreshes
+#### Example 1: Daily refreshes
 
 A financial dataset corresponding to stock prices is now being used for machine learning. To make analysis more modular, the dataset has been historically organized by year. The dataset was initiated in 2000 and has been constantly updated till today. Each year has a CSV file of the format "stock_data\_&lt;YEAR>.csv", where &lt;YEAR> is the year of the data. The data for the most recent year is updated daily to account for new data. This directory of these files looks something like this:
 
@@ -566,7 +538,7 @@ stock_data_2023.csv
 
 Because the dataset is updated continuously, the dataset should set the isLiveDataset to`true`. Assuming the year is 2023, it is safe to add a checksum for files corresponding to years 2000 to 2022 (inclusive). However, Croissant does not recommend setting the checksum for 2023 until the year is 2024 to avoid mismatches between a prior checksum and the current file. Finally, all files corresponding to prior years should trigger a version update if they are changed (e.g., to reflect a bug fix), since the semantics of the dataset have changed (i.e., history was "rewritten"). However, the current year is understood to be incomplete, so appending new data to the data in the current year should not trigger a version update.
 
-##### Example 2: Daily snapshots
+#### Example 2: Daily snapshots
 
 The same data from Example 1 is exported at a finer granularity to match the daily refresh of the dataset. Accordingly, the data is "snapshotted" into files of the form "stock_data\_&lt;MONTH>\_&lt;DAY>\_&lt;YEAR>.csv" to reflect the month, day, and year of the data in the file. Each file is only written once—when all data from that date is finalized at the end of day.
 
@@ -593,7 +565,7 @@ While [schema.org/Dataset](http://schema.org/Dataset) defines a `distribution` p
 
 In Croissant, the `distribution` property contains one or more `FileObject` or `FileSet` instead of schema.org's `DataDownload.`
 
-### FileObject
+### FileObject Class
 
 `FileObject` is the Croissant class used to represent individual files that are part of a dataset.
 
@@ -636,7 +608,7 @@ Most of the important properties needed to describe a `FileObject` are defined i
     <td><a href="https://schema.org/sameAs">sc:sameAs</a></td>
     <td><a href="http://schema.org/URL">URL</a></td>
     <td>MANY</td>
-    <td>URL (or local name) of a FileObject with the same content, but in a different format.</td>
+    <td>URL (or local name) of a <code>FileObject</code> with the same content, but in a different format.</td>
   </tr>
   <tr>
     <td><a href="https://schema.org/sha256">sc:sha256</a></td>
@@ -644,22 +616,12 @@ Most of the important properties needed to describe a `FileObject` are defined i
     <td>ONE</td>
     <td>Checksum for the file contents.</td>
   </tr>
-</table>
-
-In addition, `FileObject` defines the following property:
-
-<table>
-  <thead>
-    <th>Property</th>
-    <th>ExpectedType</th>
-    <th>Cardinality</th>
-    <th>Description</th>
-  </thead>
+  <tr><td><b>Additional</b></td></tr>
   <tr>
     <td>containedIn</td>
-    <td><a href="http://schema.org/Text">Text</a></td>
+    <td><a href="http://schema.org/URL">URL</a></td>
     <td>MANY</td>
-    <td>Another <code>FileObject</code> or <code>FileSet</code> that this one is contained in, e.g., in the case of a file extracted from an archive. When this property is present, the <code>contentUrl</code> is evaluated as a relative path within the container object.</td>
+    <td>One or more <code>FileObject</code> or <code>FileSet</code> URLs (or local names) that this one is contained in, e.g., in the case of a file extracted from an archive. When this property is present, the <code>contentUrl</code> is evaluated as a relative path within the container object.</td>
   </tr>
 </table>
 
@@ -703,7 +665,7 @@ Next: An archive and some files extracted from it (represented via the `containe
 }
 ```
 
-### FileSet
+### FileSet Class
 
 In many datasets, data comes in the form of collections of homogeneous files, such as images, videos or text files, where each file needs to be treated as an individual item, e.g., as a training example. `FileSet` is a class that describes such collections of files.
 
@@ -735,6 +697,12 @@ A `FileSet` is a set of files located in a container, which can be an archive `F
     <td><a href="http://schema.org/Text">Text</a></td>
     <td>MANY</td>
     <td>A glob pattern that specifies the files to exclude.</td>
+  </tr>
+  <tr>
+    <td><a href="https://schema.org/encodingFormat">sc:encodingFormat</a></td>
+    <td><a href="http://schema.org/Text">Text</a></td>
+    <td>MANY</td>
+    <td>The formats of the file, given as a mime type. Unregistered or niche encoding and file formats can be indicated instead via the most appropriate URL, e.g. defining Web page or a Wikipedia/Wikidata entry.</td>
   </tr>
 </table>
 
@@ -818,7 +786,7 @@ A key challenge is that ML data comes in many different formats, including unstr
 
 Let's introduce the relevant classes first, before illustrating how they are used through examples.
 
-### RecordSet
+### RecordSet Class
 
 A `RecordSet` describes a set of structured records obtained from one or more data sources (typically a file or set of files) and the structure of these records, expressed as a set of fields (e.g., the columns of a table). A `RecordSet` can represent flat or nested data.
 
@@ -852,6 +820,12 @@ In addition to `Field`s, RecordSet also supports defining a `key` for the record
     <td>One or more records that constitute the data of the <code>RecordSet</code>.</td>
   </tr>
   <tr>
+    <td>dataType</td>
+    <td>DataType</td>
+    <td>MANY</td>
+    <td>Specify a DataType that each record conforms to, as well as mandatory fields. Refer to the section on [Data Types](#data-types)</td>
+  </tr>
+  <tr>
     <td>examples</td>
     <td>
       JSON<br>
@@ -870,7 +844,7 @@ In addition to `Field`s, RecordSet also supports defining a `key` for the record
   </tr>
 </table>
 
-### Field
+### Field Class
 
 A `Field` is part of a `RecordSet`. It may represent a column of a table, or a nested data structure.
 
@@ -1012,7 +986,7 @@ Let's see a simple example: The ratings `RecordSet` below defines the fields use
 
 The ratings `RecordSet` above corresponds to a CSV table, declared elsewhere as a ratings table `FileObject`. Each field specifies as a source the corresponding column of the CSV file.
 
-### DataSource
+### DataSource Class
 
 `RecordSet`s specify where to get their data via the `dataSource` property of Field. `DataSource` is the class describing the data that can be extracted from files to populate a `RecordSet`. This class should be used when the data coming from the source needs to be transformed or formatted to be included in the ML dataset; otherwise a simple `Reference` can be used instead to point to the source.
 
@@ -1065,7 +1039,7 @@ The ratings `RecordSet` above corresponds to a CSV table, declared elsewhere as 
 
 We now describe each of these properties and the corresponding classes in more detail.
 
-#### Extract
+#### Extract Class
 
 Sometimes, not all the data from the source is needed, but only a subset. The `Extract` class can be used to specify how to do that, depending on the type of the data. Here is a breakdown:
 
@@ -1108,9 +1082,9 @@ Sometimes, not all the data from the source is needed, but only a subset. The `E
 
 Croissant supports a few simple transformations that can be applied on the source data:
 
-- delimiter: split a string into an array using the supplied character.
-- regex: A regular expression to parse the data.
-- jsonPath: A JSON path to evaluate on the (JSON) data source.
+- **delimiter**: split a string into an array using the supplied character.
+- **regex**: A regular expression to parse the data.
+- **jsonPath**: A JSON path to evaluate on the (JSON) data source.
 
 For example, to extract information from a filename using a regular expression, we can write:
 
@@ -1128,7 +1102,7 @@ For example, to extract information from a filename using a regular expression, 
 }
 ```
 
-#### Format
+#### Format 
 
 A format string used to parse the values coming from a `DataSource`. For example, a date may be represented as the string "2022/11/10", and interpreted into the correct date via the format "yyyy/MM/dd". Formats correspond to a target data type.
 
@@ -1168,18 +1142,21 @@ Note that this list is not exhaustive, and not all Croissant implementations wil
 
 ### Data Types
 
-Specifying data types on the `Fields` of `RecordSets` is crucial for data validation, and downstream processing, e.g., to enable ML frameworks to automatically populate the right data structures when loading datasets.
+Specifying data types on the `Fields` of `RecordSets` is crucial for data validation and downstream processing, e.g., to enable ML frameworks to automatically populate the right data structures when loading datasets.
 
-Croissant supports two kinds of data types: simple, atomic data types such as integers and strings, and semantic data types, which convey more meaning and can be structured (more on that below).
+Croissant supports two kinds of data types: 
+
+- Simple, atomic data types such as integers and strings.
+- Semantic data types, which convey more meaning and can be structured.
 
 Data types can be specified at two levels:
 
 - On individual `Field`s, to specify a type that each value of that specific field will conform to. This is a standard notion of typing, similar to, say, assigning a type to a column in a database table.
 - On an entire `RecordSet`, to specify a type that each record conforms to, as well as possibly mandatory fields.
 
-#### DataType
+#### DataType Class
 
-The data type of values expected for a `Field` in a `RecordSet`. This class is inspired by the `Datatype` class in [CSVW](https://csvw.org/). In addition to simple atomic types, types can be semantic types, such as `schema.org` classes, as well types defined in other vocabularies.
+The variety of values expected in a `dataType` property on a `Field` or `RecordSet`. This class is inspired by the `Datatype` class in [CSVW](https://csvw.org/). In addition to simple atomic types, semantic types such as `schema.org` classes as well types defined in other vocabularies can be used.
 
 A field may have more than a single assigned `dataType`, in which case at least one must be an atomic data type (e.g.: `sc:Text`), while other types can provide more semantic information, possibly in the context of ML.
 
@@ -1224,12 +1201,16 @@ Other data types commonly used in ML datasets:
 
 <table>
   <thead>
-    <th>dataType</th>
-    <th>Usage</th>
+  <th>dataType</th>
+  <th>Usage</th>
   </thead>
   <tr>
     <td><a href="https://schema.org/ImageObject">sc:ImageObject</a></td>
     <td>Describes a field containing the content of an image (pixels).</td>
+  </tr>
+  <tr>
+    <td><a href="http://schema.org/Enumeration">sc:Enumeration</a></td>
+    <td> Refer to the section "ML-Specific Features > [Categorical Data](#categorical-data)".</td>
   </tr>
   <tr>
     <td><a href="http://mlcommons.org/schema/BoundingBox">cr:BoundingBox</a></td>
@@ -1241,11 +1222,19 @@ Other data types commonly used in ML datasets:
   </tr>
   <tr>
     <td><a href="http://mlcommons.org/schema/Split">cr:Split</a></td>
-    <td>Describes a RecordSet used to divide data into multiple sets according to intended usage with regards to models. Refer to the section "ML-specific features > Splits".</td>
+    <td>Describes a RecordSet used to divide data into multiple sets according to intended usage with regards to models. Refer to the section "ML-Specific Features > [Splits](#splits)".</td>
+  </tr>
+    <tr>
+    <td>cr:Label</td>
+    <td> Refer to the section "ML-Specific Features > [Label Data](#label-data)".</td>
+  </tr>
+    <tr>
+    <td><a href="http://schema.org/GeoShape">sc:GeoShape</a></td>
+    <td>A Schema.org Type. The geographic shape of a place. A GeoShape can be described using several properties whose values are based on latitude/longitude pairs.</td>
   </tr>
 </table>
 
-#### Using data types from other vocabularies
+#### Using Data Types from Other Vocabularies
 
 Croissant datasets can use data types from other vocabularies, such as Wikidata. These may be supported by the tools consuming the data, but don’t need to. For example:
 
@@ -1493,7 +1482,7 @@ While the above example joins two tabular files, joining is also possible betwee
 ]
 ```
 
-### Annotating Data
+## Annotating Data
 
 Annotations are a general mechanism to attach additional information to other pieces of data. Annotations can be used in multiple use cases, including: statistics, provenance (including human annotator information), labels (textual or otherwise).
 
@@ -1539,9 +1528,12 @@ Annotations can also appear at the level of a RecordSet. A RecordSet-level annot
 
 Croissant `RecordSet`s provide two mechanisms to represent hierarchical data:
 
+* Nested fields via the `subField` property
+* Categorization via the `enumeration` dataType
+
 #### Nested Fields
 
-`Field`s may be nested inside other fields, via the `subField` property, which makes it possible to group fields logically inside records: for example, a field of type `sc:GeoCoordinates` may have two `subField`s: latitude and longitude. Here is what it looks like:
+`Field`s may be nested inside other fields, via the `subField` property, which makes it possible to group fields logically inside records: for example, a field of type `sc:GeoCoordinates` may have two `subField`s: `latitude` and `longitude`. Here is what it looks like:
 
 ```json
 {
@@ -1576,15 +1568,15 @@ Note that the values of these fields may still come from a "flat" source, such a
 
 Furthermore the field ids "gps_coordinates/latitude" and "gps_coordinates/longitude" are not arbitrary: they correspond to the "latitude" and "longitude" properties associated with the [sc:GeoCoordinates](http://schema.org/GeoCoordinates) type. This uses the same property mapping mechanism we introduced in Section [Typing RecordSets](#typing-recordsets).
 
-## ML-specific Features
+### ML-specific Features
 
 We now introduce a number of features that are useful in the context of ML data. These are implemented using the primitives defined in the previous sections, generally as new classes or properties defined in the Croissant namespace. ML-specific features are experimental and subject to change based on the needs of ML users.
 
-### Categorical Data
+### Enumeration Type
 
 In machine learning applications, it's often useful to know that some of the data is categorical in nature, and has a finite set of values that can be used, say, for classification. Croissant represents that information by using the [sc:Enumeration](https://schema.org/Enumeration) class from [schema.org](https://schema.org), as a `dataType` on `RecordSet`s that hold categorical data.
 
-These RecordSets must define a `name` field conforming with the [sc:name](https://schema.org/name) definition, i.e. a human-readable text naming the item. They must also specify a key to identify each possible instance. Enumerations should have a `url` field, which can also be used to uniquely refer to each instance.
+These RecordSets must define a `@id` field conforming with the [sc:name](https://schema.org/name) definition, i.e. a human-readable text naming the item. They must also specify a `key` to identify each possible instance. Enumerations should have a `url` field, which can also be used to uniquely refer to each instance.
 
 For example, the [COCO](https://cocodataset.org/#format-data) dataset defines categories and super-categories ([Croissant definition](https://github.com/mlcommons/croissant/blob/main/datasets/1.0/coco2014/metadata.json)), to which are associated other parts of the dataset. Using Croissant, one can describe the COCO super-categories the following way:
 
@@ -1665,7 +1657,7 @@ Finally, the following example shows an enumeration featuring the `url` field to
 }
 ```
 
-### Splits
+### Splits Type
 
 ML datasets may come in [different data splits, intended to be used for different steps of a model building](https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets), usually training, validation and test.
 
@@ -1721,7 +1713,7 @@ Once a datasets splits have been defined, any `RecordSet` can refer to those usi
 
 Note that the field here is named "split", but doesn’t need to: the fact that this is an ML split comes from the `dataType` of the `RecordSet` it refers to. As one would expect, tools working with the Croissant config format can infer the data files needed for each split. So if a user requests loading only the validation split of the COCO 2014 dataset, the tool working with Croissant knows to download the file "val2014.zip", but not "train2014.zip" and "test2014.zip".
 
-### Label Data
+### Label Data Type
 
 Most ML workflows use label data. In Croissant, we identify label data using the class `cr:Label`. Labels will typically appear as fields in a `RecordSet`. The default semantics is that labels apply to the record they are defined in.
 
@@ -1818,7 +1810,7 @@ Bounding boxes are common annotations in computer vision. They describe imaginar
 }
 ```
 
-### SegmentationMask
+### SegmentationMask Type
 
 Segmentation masks are common annotations in computer vision. They describe pixel-perfect zones that outline objects or groups of objects in images or videos. Croissant defines `cr:SegmentationMask` with two ways to describe them:
 
@@ -1905,4 +1897,105 @@ Segmentation mask as an image:
     "subField": "cr:subField",
     "transform": "cr:transform"
   }
+```
+
+## Appendix 2: Mermaid Diagram
+
+```mermaid
+classDiagram
+    Dataset -- "many" FileObject : distribution
+    Dataset -- "many" FileSet : distribution
+    Dataset -- "many" RecordSet : recordSet
+    RecordSet -- "many" Field : field
+    FileObject -- "many" FileSet : containedIn
+    FileSet -- "many" FileObject : containedIn
+
+    Field -- "one" DataSource : source
+
+    DataSource -- "one" FileObject : fileObject
+    DataSource -- "one" FileSet : fileSet
+    DataSource -- "one" RecordSet : recordSet
+
+
+    class Dataset {
+        +@type
+        +@context
+        +name
+        +description
+        +license [ ]
+        +url
+        +creator [ ]
+        +datePublished
+        +keywords [ ]
+        +publisher [ ]
+        +version
+        +dateCreated
+        +dateModified
+        +sameAs [ ]
+        +sdLicense[ ]
+        +inLanguage [ ]
+        +distribution [ ]
+        +dct:conformsTo
+        +isLiveDataset
+        +citeAs
+    }
+
+    class DataSource {
+        +@id
+        +fileObject  
+        +fileSet
+        +recordSet
+        +extract
+        +transform [ ]
+        +format
+    }
+
+    class FileObject {
+        +@id
+        +sc:name
+        +sc:contentUrl
+        +sc:contentSize
+        +sc:encodingFormat [ ]
+        +sc:sameAs [ ]
+        +sc:sha256
+        +containedIn [ ]
+    }
+
+    class FileSet {
+        +@id
+        +containedIn [ ]
+        +includes [ ]
+        +excludes [ ]
+        +sc:encodingFormat [ ]
+    }
+
+    class RecordSet {
+        +@id
+        +name
+        +field [ ]
+        +key [ ]
+        +data [ ]
+        +examples [ ]
+        +annotation [ ]
+    }
+
+    class Field {
+        +@id
+        +name
+        +source
+        +dataType [ ]
+        +isArray
+        +arrayShape
+        +references [ ]
+        +subField [ ]
+        +parentField [ ]
+        +annotation [ ]
+    }
+
+    class Extract {
+        +@id
+        +fileProperty
+        +column
+        +jsonPath
+    }
 ```
